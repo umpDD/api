@@ -1,0 +1,29 @@
+server:
+  port: 8090
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: api_routes
+          uri: http://localhost:8102
+          predicates:
+            - Path=/api/**
+  application:
+    name: api-gateway
+
+dubbo:
+  application:
+    name: dubbo-api-platform-consumer
+    qosEnable: true
+    qosPort: 33333
+    qosAcceptForeignIp: false
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    id: nacos-registry
+    address: nacos://localhost:8848
+
+

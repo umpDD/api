@@ -1,6 +1,5 @@
 package com.api.project.controller;
 
-import com.alibaba.nacos.shaded.com.google.gson.Gson;
 import com.api.project.annotation.AuthCheck;
 import com.api.project.common.*;
 import com.api.project.constant.CommonConstant;
@@ -14,6 +13,7 @@ import com.api.project.service.InterfaceInfoService;
 import com.api.project.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.wuyi.apiclientsdk.client.ApiClient;
 import com.wuyi.apicommon.model.entity.InterfaceInfo;
 import com.wuyi.apicommon.model.entity.User;
@@ -289,7 +289,7 @@ public class InterfaceInfoController {
         //校验接口是否存在
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
         //在数据库中找到请求方法
-        String interfaceInfoName = oldInterfaceInfo.getName();
+        //String interfaceInfoName = oldInterfaceInfo.getName();
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
@@ -302,12 +302,24 @@ public class InterfaceInfoController {
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
 
+        ApiClient client = new ApiClient(accessKey, secretKey);
+
+        /*
+        // 把前端过来的userRequestParams转换成user.class
+        com.google.gson.Gson gson = new Gson();
+        com.wuyi.apiclientsdk.model.User user = gson.fromJson(userRequestParams, com.wuyi.apiclientsdk.model.User.class);
+        // 假设它就接入这个方法
+        String result = client.getUserByPost(user);
+        */
+        String result = client.getPcGirlGet();
+
         // 调用反射
-        Object result = reflectionInterface(ApiClient.class, interfaceInfoName, userRequestParams, accessKey, secretKey);
+        // Object result = reflectionInterface(ApiClient.class, interfaceInfoName, userRequestParams, accessKey, secretKey);
+
         return ResultUtils.success(result);
     }
 
-    public Object reflectionInterface(Class<?> reflectionClass, String methodName, String parameter, String accessKey, String secretKey) {
+ /*   public Object reflectionInterface(Class<?> reflectionClass, String methodName, String parameter, String accessKey, String secretKey) {
         //构造反射类的实例
         Object result = null;
         try {
@@ -339,5 +351,5 @@ public class InterfaceInfoController {
             log.error("反射调用参数错误",e);
         }
         return result;
-    }
+    }*/
 }
